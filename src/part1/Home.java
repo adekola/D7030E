@@ -117,30 +117,23 @@ public class Home extends javax.swing.JFrame {
         //use RegEx here to split up the commands from the textfield..
        
         
-        //get the command from text field an instantiate a Process Builder stuuf
+       
+        String cmdtxt = cmdTextField.getText();
         
-       try{ 
-        List<String> commands = new ArrayList<String>();
-        //commands.add("/bin/sh");
-        //commands.add("-c");
-        commands.add(cmdTextField.getText());
-        //commands.add("ls /");
-        
-       System.out.println(cmdTextField.getText());
-        
-         // execute the command
-    SysCommandExecutor commandExecutor = new SysCommandExecutor(commands);
-    int result = commandExecutor.executeCommand();
+        String[] cmd = {
+                "/bin/sh",
+                "-c", 
+                cmdtxt
+                };
+           
 
-    // get the stdout and stderr from the command that was run
-    StringBuilder stdout = commandExecutor.getStandardOutputFromCommand();
-    StringBuilder stderr = commandExecutor.getStandardErrorFromCommand();
-    
-    outputTextArea.setText(stdout.toString());
-   
-       }
-       catch(IOException ex){ System.out.println(ex.toString()); }
-       catch(InterruptedException ex){ System.out.println(ex.toString()); }
+        // execute the command
+        ShellCommandExecutor ex = new ShellCommandExecutor();
+        String output = ex.executeCommand(cmd);
+
+        outputTextArea.setText(output);
+
+     
     }//GEN-LAST:event_execButtonActionPerformed
 
     private void cmdTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdTextFieldActionPerformed
