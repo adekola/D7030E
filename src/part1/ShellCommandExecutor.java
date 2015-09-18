@@ -10,49 +10,43 @@ import java.io.InputStreamReader;
 
 public class ShellCommandExecutor {
 
-    /*
-	public static void main(String[] args) {
+    String[] cmd;
 
-		ShellCommandExecutor obj = new ShellCommandExecutor();
+    String result;
 
-		String domainName = "google.com";
-		
-		//in mac oxs
-		String command = "ls /media";
-		
-		//in windows
-		//String command = "ping -n 3 " + domainName;
-		
-		String output = obj.executeCommand(command);
+    public ShellCommandExecutor(String[] command) {
+        cmd = command;
 
-		System.out.println(output);
+    }
 
-	}
+    public String getResult() {
+        return result;
+    }
 
-    */
-	public String executeCommand(String[] command) {
+    public void setResult(String result) {
+        this.result = result;
+    }
 
-            
-		StringBuffer output = new StringBuffer();
+    public String executeCommand() {
+        StringBuffer output = new StringBuffer();
 
-		Process p;
-		try {
-			p = Runtime.getRuntime().exec(command);
-			p.waitFor();
-			BufferedReader reader = 
-                            new BufferedReader(new InputStreamReader(p.getInputStream()));
+        Process p;
+        try {
+            p = Runtime.getRuntime().exec(cmd);
+            p.waitFor();
+            BufferedReader reader
+                    = new BufferedReader(new InputStreamReader(p.getInputStream()));
 
-                        String line = "";			
-			while ((line = reader.readLine())!= null) {
-				output.append(line + "\n");
-			}
+            String line = "";
+            while ((line = reader.readLine()) != null) {
+                output.append(line + "\n");
+            }
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		return output.toString();
-
-	}
+        return output.toString();
+    }
 
 }
