@@ -10,6 +10,10 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.SwingWorker;
 
 /**
  *
@@ -122,11 +126,12 @@ public class Home extends javax.swing.JFrame {
     private void processEvent() throws NumberFormatException {
         // TODO add your handling code here
 
-        Thread worker = new Thread() {
-            public void run() {
-                //let's find out what the user has entered
+        SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+            @Override
+            protected String doInBackground() throws Exception {
+                 //let's find out what the user has entered
                 String cmdtxt = cmdTextField.getText();
-
+                String out = "";
                 if (tryParseInt(cmdtxt)) {
                     //do the loopy thingy
                     Integer count = Integer.parseInt(cmdtxt);
@@ -142,14 +147,30 @@ public class Home extends javax.swing.JFrame {
 
                     // execute the command
                     ShellCommandExecutor ex = new ShellCommandExecutor(cmd);
-                    String out = ex.executeCommand();
-                    outputTextArea.setText(out);
+                    out = ex.executeCommand();
                 }
+
+                return out;
             }
+
+            // Can safely update the GUI from this method.
+            protected void done() {
+
+                String status;
+                try {
+                    // Retrieve the return value of doInBackground.
+                    status = get();
+                    outputTextArea.setText(status);
+                } catch (InterruptedException e) {
+                    // This is thrown if the thread's interrupted.
+                } catch (ExecutionException ex) {
+                    Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
+                } 
+            }
+
         };
 
-        worker.start();
-
+        worker.execute();
     }
 
     private void cmdTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdTextFieldActionPerformed
