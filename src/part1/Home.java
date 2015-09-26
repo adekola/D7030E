@@ -8,11 +8,16 @@ package part1;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.net.ssl.SSLSocket;
+import javax.swing.JOptionPane;
 import javax.swing.SwingWorker;
 
 /**
@@ -27,6 +32,8 @@ public class Home extends javax.swing.JFrame {
     public Home() {
         initComponents();
     }
+
+    boolean remoteExec = false;
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -43,6 +50,9 @@ public class Home extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         outputTextArea = new javax.swing.JTextArea();
+        jLabel3 = new javax.swing.JLabel();
+        urlTextField = new javax.swing.JTextField();
+        connectButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("D7001D_LAB2: GUI Commandline Execution ");
@@ -69,42 +79,66 @@ public class Home extends javax.swing.JFrame {
         outputTextArea.setRows(5);
         jScrollPane1.setViewportView(outputTextArea);
 
+        jLabel3.setText("url");
+
+        urlTextField.setName(""); // NOI18N
+        urlTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                urlTextFieldActionPerformed(evt);
+            }
+        });
+
+        connectButton.setText("Connect");
+        connectButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                connectButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addGap(32, 32, 32)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel1)
-                    .addComponent(jLabel2))
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel3))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(cmdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 378, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(urlTextField, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(cmdTextField, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 378, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(execButton, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(execButton, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(connectButton, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(35, 35, 35)
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(15, 15, 15)
+                        .addComponent(jLabel2))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(urlTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(connectButton))
+                .addGap(18, 18, 18)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cmdTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(execButton))
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(27, 27, 27)
-                        .addComponent(jLabel2)
-                        .addContainerGap(349, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 320, Short.MAX_VALUE)
-                        .addGap(62, 62, 62))))
+                .addContainerGap(19, Short.MAX_VALUE))
         );
 
         pack();
@@ -124,33 +158,54 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_execButtonActionPerformed
 
     private void processEvent() throws NumberFormatException {
-        // TODO add your handling code here
 
-        SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
+        SwingWorker<String, Void> worker;
+        worker = new SwingWorker<String, Void>() {
             @Override
             protected String doInBackground() throws Exception {
-                 //let's find out what the user has entered
-                String cmdtxt = cmdTextField.getText();
-                String out = "";
-                if (tryParseInt(cmdtxt)) {
-                    //do the loopy thingy
-                    Integer count = Integer.parseInt(cmdtxt);
-                    Loopy lp = new Loopy();
-                    Integer result = lp.Loop(count);
-                    outputTextArea.setText(result.toString());
+                String output = "";
+                Socket s = null;
+                //choose between remote and local execution
+                //parse the content of the URL field then decide between remote and local
+                if (!(urlTextField.getText().isEmpty())) {
+                    //now try the remote thingy
+                    if (s == null)
+                        s = new Socket(urlTextField.getText(), 9090);
+                    
+                    //get the input and send to server
+                    BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
+                    System.out.println("Welcome message from the server:" + in.readLine());
+                    PrintWriter out = new PrintWriter(s.getOutputStream());
+                    //just send in the command
+                    out.write(urlTextField.getText());
+                    
+                    //start a loop to listen for the server's response.
+                    //once done, break out of the loop
+                    output = in.readLine();
+                    
                 } else {
-                    final String[] cmd = {
-                        "/bin/sh",
-                        "-c",
-                        cmdtxt
-                    };
+                    //let's find out what the user has entered
+                    String cmdtxt = cmdTextField.getText();
+                    if (tryParseInt(cmdtxt)) {
+                        //do the loopy thingy
+                        Integer count = Integer.parseInt(cmdtxt);
+                        Loopy lp = new Loopy();
+                        Integer result = lp.Loop(count);
+                        output = result.toString();
+                    } else {
+                        final String[] cmd = {
+                            "/bin/sh",
+                            "-c",
+                            cmdtxt
+                        };
 
-                    // execute the command
-                    ShellCommandExecutor ex = new ShellCommandExecutor(cmd);
-                    out = ex.executeCommand();
+                        // execute the command
+                        ShellCommandExecutor ex = new ShellCommandExecutor(cmd);
+                        output = ex.executeCommand();
+                    }
                 }
 
-                return out;
+                return output;
             }
 
             // Can safely update the GUI from this method.
@@ -160,12 +215,14 @@ public class Home extends javax.swing.JFrame {
                 try {
                     // Retrieve the return value of doInBackground.
                     status = get();
+                    System.out.println("Server said this;");
+                    System.out.println(status);
                     outputTextArea.setText(status);
                 } catch (InterruptedException e) {
                     // This is thrown if the thread's interrupted.
                 } catch (ExecutionException ex) {
                     Logger.getLogger(Home.class.getName()).log(Level.SEVERE, null, ex);
-                } 
+                }
             }
 
         };
@@ -176,6 +233,18 @@ public class Home extends javax.swing.JFrame {
     private void cmdTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cmdTextFieldActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_cmdTextFieldActionPerformed
+
+    private void urlTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_urlTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_urlTextFieldActionPerformed
+
+    private void connectButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_connectButtonActionPerformed
+        // TODO add your handling code here:
+
+        //Maybe some RegEx to validate the hostname/IP Address
+        //take the url and attempt a connection..if successful, give feedback 
+
+    }//GEN-LAST:event_connectButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -214,10 +283,13 @@ public class Home extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JTextField cmdTextField;
+    private javax.swing.JButton connectButton;
     private javax.swing.JButton execButton;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextArea outputTextArea;
+    private javax.swing.JTextField urlTextField;
     // End of variables declaration//GEN-END:variables
 }
