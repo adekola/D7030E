@@ -31,7 +31,7 @@ public class ClientHandler extends Thread {
         try {
 
             String result = "";
-                // Decorate the streams so we can send characters
+            // Decorate the streams so we can send characters
             // and not just bytes.  Ensure output is flushed
             // after every newline.
             BufferedReader in = new BufferedReader(
@@ -41,11 +41,11 @@ public class ClientHandler extends Thread {
             // Send a welcome message to the client.
             out.println("Hello, you are client #" + clientNumber + ".");
 
-                
-            String input = in.readLine();
-            System.out.println(input);
-                
+            String input;
+            while ((input = in.readLine()) != null) {
+                System.out.println("I got this from client:" + input);
                 //done reading the input stream, now do some useful stuff
+                
                 if (tryParseInt(input)) {
                     //do the loopy thingy
                     Integer count = Integer.parseInt(input);
@@ -67,8 +67,10 @@ public class ClientHandler extends Thread {
                 }
 
                 //done with generating a result..now tlak back to the client, common
+                System.out.println("Tell the client this");
+                System.out.println(result);
                 out.println(result);
-
+            }
         } catch (IOException e) {
             log("Error handling client# " + clientNumber + ": " + e);
         } finally {

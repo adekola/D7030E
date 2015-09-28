@@ -164,26 +164,36 @@ public class Home extends javax.swing.JFrame {
             @Override
             protected String doInBackground() throws Exception {
                 String output = "";
+                StringBuffer bufferedResult = new StringBuffer();
                 Socket s = null;
                 //choose between remote and local execution
                 //parse the content of the URL field then decide between remote and local
                 if (!(urlTextField.getText().isEmpty())) {
                     //now try the remote thingy
-                    if (s == null)
+                    if (s == null) {
                         s = new Socket(urlTextField.getText(), 9090);
-                    
+                    }
+
                     //get the input and send to server
                     BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
                     System.out.println("Welcome message from the server:" + in.readLine());
-                    PrintWriter out = new PrintWriter(s.getOutputStream());
+                    PrintWriter printer = new PrintWriter(s.getOutputStream());
                     //just send in the command
-                    out.write(urlTextField.getText());
-                    
+                    String cmdToSend = cmdTextField.getText();
+                    System.out.println("Here's the command from here:" + cmdToSend);
+
                     //start a loop to listen for the server's response.
                     //once done, break out of the loop
-                    output = in.readLine();
+                    printer.write(cmdToSend + '\r');
+                    printer.flush();
+
+                    //  boolean readInProgress = true;
+                    String intermediate = "";
+                    while (!(intermediate = in.readLine()).isEmpty()) {
+                        output += intermediate + "\n";
+                    }
                     
-                } else {
+                } else { //Execute command locally
                     //let's find out what the user has entered
                     String cmdtxt = cmdTextField.getText();
                     if (tryParseInt(cmdtxt)) {
@@ -215,8 +225,6 @@ public class Home extends javax.swing.JFrame {
                 try {
                     // Retrieve the return value of doInBackground.
                     status = get();
-                    System.out.println("Server said this;");
-                    System.out.println(status);
                     outputTextArea.setText(status);
                 } catch (InterruptedException e) {
                     // This is thrown if the thread's interrupted.

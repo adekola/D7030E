@@ -15,15 +15,12 @@ public class TCPServer {
     // main starts things rolling
     static public void main(String args[]) throws Exception {
         int clientNumber = 0;
-        // socket;
-        ServerSocket listener = new ServerSocket(9090);
-        try {
+        try ( // socket;
+                ServerSocket listener = new ServerSocket(9090)) {
             while (true) {
                 System.out.println("Ready to receive connections on port 9090");
                 new ClientHandler(listener.accept(), clientNumber++).start();
             }
-        } finally {
-            listener.close();
         }
     }
     
