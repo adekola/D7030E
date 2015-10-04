@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.logging.FileHandler;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,18 +22,29 @@ import java.util.logging.Logger;
 public class ClientHandler extends Thread {
 
     static final Logger logger = Logger.getLogger(ClientHandler.class.getName());
+    static FileHandler handler;
 
     private Socket socket;
     private int clientNumber;
 
     public ClientHandler(Socket socket, int clientNumber, Level logLevel) {
         logger.setLevel(logLevel);
+        init();
         this.socket = socket;
         this.clientNumber = clientNumber;
     }
 
+    static void init() {
+        try {
+            handler = new FileHandler("ClientHandlerLogs.log", true);
+            logger.addHandler(handler);
+        } catch (IOException e) {
+                
+        }
+
+    }
+
     public void run() {
-        //have  timer kinda thing so that scoket is closed and client disconnected after a period of inactivity
 
         try {
 
