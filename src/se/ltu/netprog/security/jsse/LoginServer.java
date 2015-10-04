@@ -23,7 +23,7 @@ public class LoginServer {
 		SSLServerSocketFactory.getDefault();
 		
 		// create SSLServerSocket on specified port
-		serverSocket = ( SSLServerSocket ) socketFactory.createServerSocket( 7070 );
+		serverSocket = ( SSLServerSocket ) socketFactory.createServerSocket( 4477 );
 		
 	} // end LoginServer constructor
 	
