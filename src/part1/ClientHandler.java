@@ -11,16 +11,22 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  *
  * @author adekola
  */
 public class ClientHandler extends Thread {
 
+    static final Logger logger = Logger.getLogger(ClientHandler.class.getName());
+
     private Socket socket;
     private int clientNumber;
 
-    public ClientHandler(Socket socket, int clientNumber) {
+    public ClientHandler(Socket socket, int clientNumber, Level logLevel) {
+        logger.setLevel(logLevel);
         this.socket = socket;
         this.clientNumber = clientNumber;
     }
@@ -38,14 +44,16 @@ public class ClientHandler extends Thread {
                     new InputStreamReader(socket.getInputStream()));
             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
 
-            // Send a welcome message to the client.
+            // Send a welcome message to the client, and log that client nnumber [x] has been accepted
+            logger.log(Level.INFO, "Welcoming client no: {0}", clientNumber);
             out.println("Hello, you are client #" + clientNumber + ".");
 
             String input;
             while ((input = in.readLine()) != null) {
-                System.out.println("I got this from client:" + input);
+                //simply informational
+                logger.log(Level.INFO, "Client sent in this: {0}", input);
                 //done reading the input stream, now do some useful stuff
-                
+
                 if (tryParseInt(input)) {
                     //do the loopy thingy
                     Integer count = Integer.parseInt(input);
@@ -67,19 +75,24 @@ public class ClientHandler extends Thread {
                 }
 
                 //done with generating a result..now tlak back to the client, common
-                System.out.println("Tell the client this");
-                System.out.println(result);
+                logger.log(Level.INFO, "Sending this back to client: {0} \n", result);
                 out.println(result);
             }
         } catch (IOException e) {
-            log("Error handling client# " + clientNumber + ": " + e);
+            //An error has occured, a severe level of reporting is appropriate and then...
+            logger.log(Level.SEVERE, "Error handling client# {0}", clientNumber);
+            //...debug information to understand what happened
+            logger.log(Level.FINER, e.toString());
         } finally {
             try {
                 socket.close();
             } catch (IOException e) {
-                log("Couldn't close a socket, what's going on?");
+                //An error has occured, a severe level of reporting is appropriate and then...
+                logger.log(Level.SEVERE, "Couldn't close a socket, what's going on?");
+                //...debug information to understand what happened
+                logger.log(Level.FINER, e.toString());
             }
-            log("Connection with client# " + clientNumber + " closed");
+            logger.log(Level.INFO, "Connection with client {0} has been closed", clientNumber);
         }
     }
 
