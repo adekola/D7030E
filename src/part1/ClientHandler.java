@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.Arrays;
 import java.util.logging.FileHandler;
 
 import java.util.logging.Level;
@@ -39,7 +40,8 @@ public class ClientHandler extends Thread {
             handler = new FileHandler("ClientHandlerLogs.log", true);
             logger.addHandler(handler);
         } catch (IOException e) {
-                
+                logger.log(Level.FINER,  Arrays.toString(e.getStackTrace()));
+                logger.log(Level.SEVERE, "Error creating the log file" );
         }
 
     }
@@ -94,7 +96,7 @@ public class ClientHandler extends Thread {
             //An error has occured, a severe level of reporting is appropriate and then...
             logger.log(Level.SEVERE, "Error handling client# {0}", clientNumber);
             //...debug information to understand what happened
-            logger.log(Level.FINER, e.toString());
+            logger.log(Level.FINER, Arrays.toString(e.getStackTrace()));
         } finally {
             try {
                 socket.close();
@@ -102,7 +104,7 @@ public class ClientHandler extends Thread {
                 //An error has occured, a severe level of reporting is appropriate and then...
                 logger.log(Level.SEVERE, "Couldn't close a socket, what's going on?");
                 //...debug information to understand what happened
-                logger.log(Level.FINER, e.toString());
+                logger.log(Level.FINER, Arrays.toString(e.getStackTrace()));
             }
             logger.log(Level.INFO, "Connection with client {0} has been closed", clientNumber);
         }
