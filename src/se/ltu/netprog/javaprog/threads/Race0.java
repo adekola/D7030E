@@ -28,7 +28,6 @@ public void run(){
 				System.out.println();
 			System.out.print(".X".charAt(s.dif()));
 			sleep(20);
-			
 		}
 		System.out.println();
 		done=true;
