@@ -5,35 +5,27 @@ package se.ltu.netprog.javaprog.sma;
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-
-
 import java.util.Random;
 
 /**
  *
  * @author ameerah
  */
-public class QuoteService implements Deliverable{
-    
-  
-    
-    
-	public static final int QUOTE_SERVICE_MESSAGE = 300;
-	public static final int QUOTE_SERVICE_PORT = 2009;
+public class QuoteService implements Deliverable {
+
+    public static final int QUOTE_SERVICE_MESSAGE = 300;
+    public static final int QUOTE_SERVICE_PORT = 2009;
     private Object DClass;
-	public Message send(Message m) {
-            
-            
+
+    public Message send(Message m) {
+
         Random random = new Random();
         int index = random.nextInt(quotes.length);
         System.out.println(quotes[index]);
-       m.setParam("quote", quotes[index]); 
+        m.setParam("quote", quotes[index]);
         return m;
-        }
-        
-        
-    
-      
+    }
+
     static String[] quotes = new String[]{
         "Promise me you'll never forget me because if I thought you would I'd never leave - Winnie the Pooh",
         "Women have a wonderful instinct about things. They can discover everything except the obvious. - Oscar Wilde",
@@ -49,24 +41,22 @@ public class QuoteService implements Deliverable{
         "Coming together is a beginning. Keeping together is progress. Working together is success. - Henry Ford",
         "Anger and intolerance are the twin enemies of correct understanding. - Mahatma Gandhi",
         "Any man who can drive safely while kissing a pretty girl is simply not giving the kiss the attention it deserves. - Albert Einstein"
-       
+
     };
-    
+
     public static void main(String args[]) {
-		QuoteService qs = new QuoteService();
-		MessageServer ms;
-               // String inputAddress =args[2];
-		try {
-			ms = new MessageServer(QUOTE_SERVICE_PORT);
-		} catch(Exception e) {
-			System.err.println("Could not start Quote service " + e);
-			return;
-		}
-		Thread msThread = new Thread(ms);
-		ms.subscribe(QUOTE_SERVICE_MESSAGE, qs);
-		msThread.start();
-	}
-    
-    
-    
+        QuoteService qs = new QuoteService();
+        MessageServer ms;
+        // String inputAddress =args[2];
+        try {
+            ms = new MessageServer(QUOTE_SERVICE_PORT);
+        } catch (Exception e) {
+            System.err.println("Could not start Quote service " + e);
+            return;
+        }
+        Thread msThread = new Thread(ms);
+        ms.subscribe(QUOTE_SERVICE_MESSAGE, qs);
+        msThread.start();
+    }
+
 }

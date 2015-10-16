@@ -189,8 +189,8 @@ public class Home extends javax.swing.JFrame {
                     if (tryParseInt(cmdtxt)) {
                         //do the loopy thingy
                         Integer count = Integer.parseInt(cmdtxt);
-                        Loopy lp = new Loopy();
-                        Integer result = lp.Loop(count);
+                        Fibonacci lp = new Fibonacci();
+                        Integer result = lp.getFibo(count);
                         output = result.toString();
                     } else {
                         final String[] cmd = {

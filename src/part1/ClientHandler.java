@@ -71,8 +71,7 @@ public class ClientHandler extends Thread {
                 if (tryParseInt(input)) {
                     //do the loopy thingy
                     Integer count = Integer.parseInt(input);
-                    Loopy lp = new Loopy();
-                    Integer intOut = lp.Loop(count);
+                    Integer intOut = Fibonacci.getFibo(count);
                     result = intOut.toString();
                     //write to outputstream
 

@@ -26,8 +26,14 @@ public class UDPEchoServer {
 				System.out.println("Message from " + dp.getAddress().getHostAddress());
 				
 				// Send it right back 
-                                dp.setData("Adekola".getBytes());
-				s.send(dp); 
+                                byte[] meName = "Adekola".getBytes();
+                                dp.setData(meName);
+                                /*
+                                byte[] result = new byte[BUFSIZE+ "Adekola".getBytes().length];
+                                System.arraycopy(dp.getData(), 0, result.length, 0, dp.getData().length);
+                                System.arraycopy(meName, 0, result.length, dp.getData().length, meName.length);
+				*/
+                                s.send(dp); 
 				dp.setLength(BUFSIZE);// avoid shrinking the packet buffer
 				
 			} 

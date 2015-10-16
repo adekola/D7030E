@@ -25,7 +25,7 @@ public class LoginClient {
 			// create SSLSocket from factory
 			SSLSocket socket = 
 				( SSLSocket ) socketFactory.createSocket(
-						"52.30.18.205", 4477 );
+						"ec2-52-19-61-171.eu-west-1.compute.amazonaws.com", 4477 );
 			
 			// create PrintWriter for sending login to server
 			
