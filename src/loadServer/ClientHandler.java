@@ -37,6 +37,6 @@ public class ClientHandler extends Thread {
             // Decorate the streams so we can send characters
             // and not just bytes.  Ensure output is flushed
             // after every newline.
-            Fibonacci.getFibo(99292272);
+            Fibonacci.getFibo(200);
     }
 }
