@@ -11,14 +11,6 @@ package loadServer;
  */
 public class Fibonacci {
 
-    public static void main(String[] args){
-        if (args.length > 0){
-            int num = Integer.parseInt(args[0]);
-            getFibo(num);
-        }
-        else
-            getFibo(99292272);
-    }
     public static int getFibo(int number) {
         if (number == 1 || number == 2) {
             return 1;
