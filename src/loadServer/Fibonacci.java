@@ -17,7 +17,7 @@ public class Fibonacci {
             getFibo(num);
         }
         else
-            getFibo(99292272);
+            getFibo(200);
     }
     public static int getFibo(int number) {
         if (number == 1 || number == 2) {
