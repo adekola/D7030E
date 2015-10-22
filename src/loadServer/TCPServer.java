@@ -16,14 +16,20 @@ public class TCPServer {
     // main starts things rolling
     static public void main(String args[]) throws Exception {
         int clientNumber = 0;
-        try ( // socket;
+        try {//socket;
 
-                ServerSocket listener = new ServerSocket(9090)) {
+                ServerSocket listener = new ServerSocket(9090));
+                
             while (true) {
                 //information log, just to notify of the readiness of the server to accept connections
                 logger.log(Level.INFO, "Ready to receive connections on port 9090");
                 new ClientHandler(listener.accept(), clientNumber++).start();
             }
+        }
+        
+        catch(Exception ex){
+            
+            logger.log(LevelL.SEVERE, ex.printStackTrace);
         }
     }
 
