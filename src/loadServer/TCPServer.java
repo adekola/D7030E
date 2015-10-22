@@ -24,9 +24,4 @@ public class TCPServer {
                 new ClientHandler(listener.accept(), clientNumber++).start();
             }
         }
-        
-        catch(Exception ex){
-            
-            logger.log(LevelL.SEVERE, ex.printStackTrace());
-        }
-    }
+}
