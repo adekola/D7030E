@@ -29,7 +29,7 @@ public class TCPServer {
         
         catch(Exception ex){
             
-            logger.log(LevelL.SEVERE, ex.printStackTrace);
+            logger.log(LevelL.SEVERE, ex.printStackTrace());
         }
     }
 
